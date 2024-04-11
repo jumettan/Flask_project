@@ -8,11 +8,13 @@
     <ul>
         {% for todo in todos%}
         <li>
-            <input type="checkbox" name="done" {% if todo['done'] %} checked {% endif %} disabled onchange="this.form.submit()">
+            
             <span {%if todo ['done'] %} style="text-decoration:line-through" {%endif%}>{{ todo['task'] }}</span>
-            <a href="{{url_for('check', index=loop.index0) }}">check</a>
-            <a href="{{url_for('edit', index=loop.index0) }}">edit</a>
-            <a href="{{url_for('delete', index=loop.index0) }}">delete</a>
+            <form action="{{url_for('check', id=todo.id)}}" method="post">
+                <button type="submit">check</button>
+            </form>
+            <a href="{{url_for('edit', id=todo.id) }}">edit</a>
+            <a href="{{url_for('delete', id=todo.id) }}">delete</a>
         </li>
             
         {%endfor%}

@@ -6,9 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{url_for('edit', index=index) }}" method="post">
-        <input type="text" name="todo" value="{{todo['task'] }}">
-        <button type="submit">Save</button>
+    <form action="{{ url_for('edit', id=todo.id) }}" method="post">
+        <input type="text" name="todo" value="{{ todo.task }}">
+        <input type="submit" value="Save">
     </form>
 </body>
 </html>

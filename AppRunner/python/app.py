@@ -1,46 +1,47 @@
 from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from models import db, Todo  
 
 app = Flask(__name__, template_folder="../templates")
-
-todos = [{"task": "Sample todo", "done" : False}]
+app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db/mydatabase'
-db = SQLAlchemy(app)
+db.init_app(app)
+
+@app.before_request
+def create_tables():
+    db.create_all()
 
 @app.route('/')
 def index():
+    todos = Todo.query.all()
     return render_template("index.html", todos=todos)
 
-
-@app.route("/add)", methods =["POST"])
+@app.route("/add", methods=["POST"])
 def add():
-        todo = request.form['todo']
-        todos.append({"task": todo, "done":False})
-        return redirect(url_for("index"))   
-    
-    
-@app.route("/edit/<int:index>", methods=["GET","POST"])        
-def edit(index):
-    todo = todos[index]
-    if request.method == "POST":
-        todo['task'] = request.form["todo"]
-        return redirect(url_for("index"))
-    else:
-        return render_template("edit.html", todo=todo, index=index)
-        
-        
-@app.route("/check/<int:index>")
-def check(index):
-    todos[index]['done']= not todos[index]['done']
+    task = request.form['todo']
+    todo = Todo(task=task, done=False)
+    db.session.add(todo)
+    db.session.commit()
     return redirect(url_for("index"))
 
-    
-@app.route("/delete/<int:index>")   
-def delete(index):
-    del todos[index]
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit(id):
+    todo = Todo.query.get(id)
+    if request.method == "POST":
+        todo.task = request.form['todo']
+        db.session.commit()
+        return redirect(url_for("index"))
+    return render_template("edit.html", todo=todo)
+
+@app.route("/check/<int:id>", methods=["POST"])
+def check(id):
+    todo = Todo.query.get(id)
+    todo.done = not todo.done
+    db.session.commit()
     return redirect(url_for("index"))
-    
-    
-if __name__ == '__main__':
-    app.run(debug=True)
-    
+
+@app.route("/delete/<int:id>")
+def delete(id):
+    todo = Todo.query.get(id)
+    db.session.delete(todo)
+    db.session.commit()
+    return redirect(url_for("index"))
