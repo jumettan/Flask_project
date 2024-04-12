@@ -1,20 +1,31 @@
 version: '3'
 services:
-  web:
-    build: .
+  backend:
+    build: ./AppRunner/backend
     volumes:
-      - ./Apprunner:/app
+      - ./AppRunner/backend:/app
+      - html-files:/app/templates
+      - ./AppRunner/frontend/static:/app/static  # Add this line
     ports:
       - 5000:5000
     environment:
-      - FLASK_APP=/app/python/app.py
+      - FLASK_APP=python/app.py
       - FLASK_RUN_HOST=0.0.0.0
     command: flask run
     depends_on:
       - db
+  frontend:
+    build: ./AppRunner/frontend
+    volumes:
+      - ./AppRunner/frontend:/app
+      - html-files:/app/templates
+    ports:
+      - 8000:8000
   db:
     image: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=mydatabase
+volumes:
+  html-files:

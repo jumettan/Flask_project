@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Todo  
 
-app = Flask(__name__, template_folder="../templates")
+
+app = Flask(__name__, template_folder="/app/templates", static_folder="/app/static")
 app.debug = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db/mydatabase'
 db.init_app(app)
@@ -45,3 +46,4 @@ def delete(id):
     db.session.delete(todo)
     db.session.commit()
     return redirect(url_for("index"))
+
