@@ -7,13 +7,13 @@ h1 {
     font-size: 24px;
 }
 
-/* Targeting a class */
+
 .my-class {
     background-color: yellow;
     padding: 10px;
 }
 
-/* Targeting an ID */
+
 .my-id {
     border: 1px solid black;
     margin-top: 20px;
